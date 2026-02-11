@@ -39,7 +39,7 @@ git push heroku master
 
 ## Trouble-shooting
 
-- If you need to inspect the logs
+- Need to inspect the logs?
 
 ```
 heroku logs --tail
