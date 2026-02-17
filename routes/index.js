@@ -10,6 +10,7 @@ var readline = require('readline');
 var moment = require('moment');
 var exec = require('child_process').exec;
 var validator = require('validator');
+var xss = require('xss');
 
 // zip-slip
 var fileType = require('file-type');
@@ -18,6 +19,17 @@ var fs = require('fs');
 
 // prototype-pollution
 var _ = require('lodash');
+
+// Helper function to sanitize todos to prevent XSS attacks
+function sanitizeTodos(todos) {
+  return todos.map(function(todo) {
+    return {
+      _id: todo._id,
+      content: xss(todo.content),
+      updated_at: todo.updated_at
+    };
+  });
+}
 
 exports.index = function (req, res, next) {
   Todo.
@@ -29,7 +41,7 @@ exports.index = function (req, res, next) {
       res.render('index', {
         title: 'Goof TODO',
         subhead: 'Vulnerabilities at their absolute best best',
-        todos: todos,
+        todos: sanitizeTodos(todos),
       });
     });
 };
@@ -209,7 +221,7 @@ exports.edit = function (req, res, next) {
 
       res.render('edit', {
         title: 'TODO',
-        todos: todos,
+        todos: sanitizeTodos(todos),
         current: req.params.id
       });
     });
